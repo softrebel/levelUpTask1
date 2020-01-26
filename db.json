@@ -1,5 +1,8 @@
 {
-  "status": "ok",
-  "message": "Entity is received successfully",
-  "data": []
+  "entity": [
+    {
+      "id": 1,
+      "body": "<b>Level UP 1</b>"
+    }
+  ]
 }
