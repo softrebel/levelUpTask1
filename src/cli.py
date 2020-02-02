@@ -28,11 +28,11 @@ class TransferSanitizer:
     @staticmethod
     def escape(entity: str = '', escape_chars: Dict[str, str] = None) -> str:
         try:
-            escape_chars = escape_chars if escape_chars else TransferSanitizer.special_chars
+            escaped: Dict[str, str] = escape_chars if escape_chars else TransferSanitizer.special_chars
             import re
-            pattern: Pattern[str] = re.compile(r'(' + '|'.join(escape_chars.keys()) + r')')
-            return pattern.sub(lambda x: escape_chars[
-                x.group()] if x.group() in escape_chars else x.group(), entity)
+            pattern: Pattern[str] = re.compile(r'(' + '|'.join(escaped.keys()) + r')')
+            return pattern.sub(lambda x: escaped[
+                x.group()] if x.group() in escaped.keys() else x.group(), entity)
         except Exception as err:
             raise Exception('Error on escape: {}'.format(err))
 
