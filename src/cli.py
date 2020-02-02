@@ -1,5 +1,5 @@
 import sys
-from typing import List, Dict, Pattern, KeysView, Iterator
+from typing import List, Dict, Pattern, Union, Collection
 import requests
 import markdown
 
@@ -37,27 +37,37 @@ class TransferSanitizer:
             raise Exception('Error on escape: {}'.format(err))
 
     @staticmethod
-    def filter(escaped: str = '') -> str:
+    def filter(entity: str = '', remove_chars: List[str] = None) -> str:
         try:
-            # Todo: Implement filter methode
-            return escaped
+            import re
+            removed: Union[List[str],Collection[str]] = remove_chars if remove_chars else TransferSanitizer.special_chars.keys()
+            pattern: Pattern[str] = re.compile(r'{}'.format('|'.join(removed)))
+            return pattern.sub('', entity)
         except Exception as err:
             raise Exception('Error on escape: {}'.format(err))
 
     @staticmethod
-    def validate(filtered: str = '') -> str:
+    def validate(entity: str = '', validation_rules: Dict[str, str] = None) -> str:
         try:
             # Todo: Implement validation methode
-            return filtered
+            return entity
         except Exception as err:
             raise Exception('Error on validate: {}'.format(err))
 
     @staticmethod
-    def sanitize(entity: str = '', escape_chars: Dict[str, str] = None) -> str:
+    def sanitize(entity: str = '', escape_chars: Dict[str, str] = None, remove_chars: List[str] = None,
+                 validation_rules: Dict[str, str] = None,
+                 priority: str = "fev") -> str:
         try:
-            escaped = TransferSanitizer.escape(entity, escape_chars=escape_chars)
-            filtered = TransferSanitizer.filter(escaped)
-            sanitized = TransferSanitizer.validate(filtered)
+            priority_operations: str = priority if len(priority) <= 3 else 'fev'
+            sanitized: str = entity
+            for action in list(priority_operations)[:2]:
+                if action == 'e':
+                    sanitized = TransferSanitizer.escape(sanitized, escape_chars=escape_chars)
+                elif action == 'f':
+                    sanitized = TransferSanitizer.filter(sanitized, remove_chars=remove_chars)
+                elif action == 'v':
+                    sanitized = TransferSanitizer.validate(sanitized, validation_rules=validation_rules)
             return sanitized
         except Exception as err:
             raise Exception('Error on sanitization: {}'.format(err))
