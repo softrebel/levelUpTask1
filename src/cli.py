@@ -1,5 +1,5 @@
 import requests
-from typing import List, Dict,Pattern
+from typing import List, Dict, Pattern, KeysView, Iterator
 import sys
 import markdown
 
@@ -8,7 +8,7 @@ class TransferSanitizer:
     special_chars: Dict[str, str] = {
         '&': '&amp;',
         '"': '&quot;,',
-        '\'': '&#x27;', #
+        '\'': '&#39;',  # for more information, go to TOPICS.md
         '<': '&lt;',
         '>': '&gt;',
         '/': '&#x2F;'
@@ -21,15 +21,16 @@ class TransferSanitizer:
     @staticmethod
     def markdown_to_html(entity: str = '') -> str:
         try:
-            return markdown.markdown(entity)
+            return markdown.markdown(entity, output_format='html5')
         except Exception as err:
             raise Exception('Error on markdown: {}'.format(err))
 
     @staticmethod
-    def escape(entity: str = '') -> str:
+    def escape(entity: str = '', escape_chars: Iterator[str] = None) -> str:
         try:
+            escape_chars = escape_chars if escape_chars else TransferSanitizer.special_chars.keys()
             import re
-            pattern: Pattern[str] = re.compile(r'(' + '|'.join([*TransferSanitizer.special_chars.keys()]) + r')')
+            pattern: Pattern[str] = re.compile(r'(' + '|'.join(escape_chars) + r')')
             return pattern.sub(lambda x: TransferSanitizer.special_chars[
                 x.group()] if x.group() in TransferSanitizer.special_chars else x.group(), entity)
         except Exception as err:
@@ -50,9 +51,9 @@ class TransferSanitizer:
             raise Exception('Error on validate: {}'.format(err))
 
     @staticmethod
-    def sanitize(entity: str = '') -> str:
+    def sanitize(entity: str = '', escape_chars: Iterator[str] = None) -> str:
         try:
-            escaped = TransferSanitizer.escape(entity)
+            escaped = TransferSanitizer.escape(entity, escape_chars=escape_chars)
             filtered = TransferSanitizer.filter(escaped)
             sanitized = TransferSanitizer.validate(filtered)
             return sanitized
@@ -77,7 +78,9 @@ class TransferSanitizer:
 
     def sendToApi(self) -> Dict[str, str]:
         try:
-            return self.post_data(self.url, self.sanitize(self.markdown_to_html(self.entity)))
+            html: str = self.markdown_to_html(self.entity)
+            escape_chars: Iterator[str] = filter(lambda x: x != '&', TransferSanitizer.special_chars.keys())
+            return self.post_data(self.url, self.sanitize(html, escape_chars=escape_chars))
         except Exception as err:
             raise Exception('Error on send to APi: {}'.format(err))
 
