@@ -18,3 +18,10 @@ repos:
         language: system
         types: [python]
         entry: "python -m pylint --rcfile=.pylintrc --errors-only"
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        language: system
+        types: [python]
+        entry: "mypy --ignore-missing-imports"
