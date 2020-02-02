@@ -50,6 +50,7 @@ So i changed the pre-commit-config.yaml as below:
 4. https://travis-ci.com/
 5. https://github.com/TheAlgorithms/Python
 6. https://www.geeksforgeeks.org/copy-python-deep-copy-shallow-copy/
+7. https://security.stackexchange.com/questions/143923/whats-the-difference-between-escaping-filtering-validating-and-sanitizing
 
 [https://travis-ci.com/]: https://travis-ci.com/
 [https://docs.travis-ci.com/]: https://docs.travis-ci.com/
