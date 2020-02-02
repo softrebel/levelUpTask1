@@ -1,4 +1,8 @@
-import unittest
+import unittest, sys, os
+# region for 
+project_folder = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(project_folder)
+# endregion
 from src.cli import TransferSanitizer
 
 
