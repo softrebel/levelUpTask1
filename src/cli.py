@@ -18,9 +18,10 @@ class TransferSanitizer:
         '</script>',
     ]
 
-    def __init__(self, url: str, entity: str = ''):
+    def __init__(self, url: str, entity: str = '', sanitize_priority="fev"):
         self.url: str = url
         self.entity: str = entity
+        self.sanitize_priority: str = sanitize_priority
 
     @staticmethod
     def markdown_to_html(entity: str = '') -> str:
@@ -98,7 +99,8 @@ class TransferSanitizer:
             # !important Only & is escaped in markdown library
             escape_chars: Dict[str, str] = {i: TransferSanitizer.escape_chars[i] for i in
                                             TransferSanitizer.escape_chars if i != '&'}
-            return self.post_data(self.url, self.sanitize(html, escape_chars=escape_chars, priority='fe'))
+            return self.post_data(self.url,
+                                  self.sanitize(html, escape_chars=escape_chars, priority=self.sanitize_priority))
         except Exception as err:
             raise Exception('Error on send to APi: {}'.format(err))
 
