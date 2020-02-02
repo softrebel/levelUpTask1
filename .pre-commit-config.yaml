@@ -10,4 +10,4 @@ repos:
     rev: pylint-2.4.4
     hooks:
     -   id: pylint
-        args: ["--errors-only"]
+        entry: "python -m pylint --rcfile=.pylintrc --errors-only"
