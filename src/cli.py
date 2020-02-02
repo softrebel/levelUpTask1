@@ -1,6 +1,6 @@
-import requests
-from typing import List, Dict, Pattern, KeysView, Iterator
 import sys
+from typing import List, Dict, Pattern, KeysView, Iterator
+import requests
 import markdown
 
 
@@ -39,6 +39,7 @@ class TransferSanitizer:
     @staticmethod
     def filter(escaped: str = '') -> str:
         try:
+            # Todo: Implement filter methode
             return escaped
         except Exception as err:
             raise Exception('Error on escape: {}'.format(err))
@@ -46,6 +47,7 @@ class TransferSanitizer:
     @staticmethod
     def validate(filtered: str = '') -> str:
         try:
+            # Todo: Implement validation methode
             return filtered
         except Exception as err:
             raise Exception('Error on validate: {}'.format(err))
@@ -79,7 +81,7 @@ class TransferSanitizer:
     def send_to_api(self) -> Dict[str, str]:
         try:
             html: str = self.markdown_to_html(self.entity)
-            # Only & is escaped in markdown library
+            # !important Only & is escaped in markdown library
             escape_chars: Dict[str, str] = {i: TransferSanitizer.special_chars[i] for i in
                                             TransferSanitizer.special_chars if i != '&'}
             return self.post_data(self.url, self.sanitize(html, escape_chars=escape_chars))

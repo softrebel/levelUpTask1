@@ -30,8 +30,8 @@ class TransferSanitizerTest(unittest.TestCase):
                          '<>h1>ampersand<>/h1>')
 
     def test_post_data(self):
-        url = 'https://my-json-server.typicode.com/softrebel/levelUpTask1/entitsy'
-        self.assertEqual(TransferSanitizer.post_data(url,'&lt;h1&gt;&amp;&quot;,&lt;&#47;h1&gt;'), {
+        url = 'https://my-json-server.typicode.com/softrebel/levelUpTask1/entitys'
+        self.assertEqual(TransferSanitizer.post_data(url, '&lt;h1&gt;&amp;&quot;,&lt;&#47;h1&gt;'), {
             'status': 'failed',
             'sanitized': '&lt;h1&gt;&amp;&quot;,&lt;&#47;h1&gt;'
         })
