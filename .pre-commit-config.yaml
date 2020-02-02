@@ -1,13 +1,13 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
-    -   id: check-yaml
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
 
--   repo: https://github.com/PyCQA/pylint
+  - repo: https://github.com/PyCQA/pylint
     rev: pylint-2.4.4
     hooks:
-    -   id: pylint
-        entry: "python -m pylint --rcfile=.pylintrc --errors-only"
+      - id: pylint
+        args: ["--errors-only","--rcfile=.pylintrc"]
