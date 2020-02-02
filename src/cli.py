@@ -11,7 +11,7 @@ class TransferSanitizer:
         '\'': '&#39;',  # for more information, go to TOPICS.md
         '<': '&lt;',
         '>': '&gt;',
-        '/': '&#x2F;'
+        '/': '&#47;'
     }
 
     def __init__(self, url: str, entity: str = ''):
@@ -26,13 +26,13 @@ class TransferSanitizer:
             raise Exception('Error on markdown: {}'.format(err))
 
     @staticmethod
-    def escape(entity: str = '', escape_chars: Iterator[str] = None) -> str:
+    def escape(entity: str = '', escape_chars: Dict[str, str] = None) -> str:
         try:
-            escape_chars = escape_chars if escape_chars else TransferSanitizer.special_chars.keys()
+            escape_chars = escape_chars if escape_chars else TransferSanitizer.special_chars
             import re
-            pattern: Pattern[str] = re.compile(r'(' + '|'.join(escape_chars) + r')')
-            return pattern.sub(lambda x: TransferSanitizer.special_chars[
-                x.group()] if x.group() in TransferSanitizer.special_chars else x.group(), entity)
+            pattern: Pattern[str] = re.compile(r'(' + '|'.join(escape_chars.keys()) + r')')
+            return pattern.sub(lambda x: escape_chars[
+                x.group()] if x.group() in escape_chars else x.group(), entity)
         except Exception as err:
             raise Exception('Error on escape: {}'.format(err))
 
@@ -51,7 +51,7 @@ class TransferSanitizer:
             raise Exception('Error on validate: {}'.format(err))
 
     @staticmethod
-    def sanitize(entity: str = '', escape_chars: Iterator[str] = None) -> str:
+    def sanitize(entity: str = '', escape_chars: Dict[str, str] = None) -> str:
         try:
             escaped = TransferSanitizer.escape(entity, escape_chars=escape_chars)
             filtered = TransferSanitizer.filter(escaped)
@@ -76,10 +76,12 @@ class TransferSanitizer:
         except Exception as err:
             raise Exception('Error on post data: {}'.format(err))
 
-    def sendToApi(self) -> Dict[str, str]:
+    def send_to_api(self) -> Dict[str, str]:
         try:
             html: str = self.markdown_to_html(self.entity)
-            escape_chars: Iterator[str] = filter(lambda x: x != '&', TransferSanitizer.special_chars.keys())
+            # Only & is escaped in markdown library
+            escape_chars: Dict[str, str] = {i: TransferSanitizer.special_chars[i] for i in
+                                            TransferSanitizer.special_chars if i != '&'}
             return self.post_data(self.url, self.sanitize(html, escape_chars=escape_chars))
         except Exception as err:
             raise Exception('Error on send to APi: {}'.format(err))
@@ -94,7 +96,7 @@ if __name__ == '__main__':
         else:
             transfer.entity = input('Please Enter Your HTML/Markdown Body:\n')
 
-        print(transfer.sendToApi())
+        print(transfer.send_to_api())
 
     except ValueError as err:
         raise ValueError('argument mode must be integer')
