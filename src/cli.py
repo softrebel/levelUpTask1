@@ -5,7 +5,7 @@ import markdown
 
 
 class TransferSanitizer:
-    special_chars: Dict[str, str] = {
+    escape_chars: Dict[str, str] = {
         '&': '&amp;',
         '"': '&quot;,',
         '\'': '&#39;',  # for more information, go to TOPICS.md
@@ -13,6 +13,10 @@ class TransferSanitizer:
         '>': '&gt;',
         '/': '&#47;'
     }
+    remove_chars: List[str] = [
+        '<script>',
+        '</script>',
+    ]
 
     def __init__(self, url: str, entity: str = ''):
         self.url: str = url
@@ -28,7 +32,7 @@ class TransferSanitizer:
     @staticmethod
     def escape(entity: str = '', escape_chars: Dict[str, str] = None) -> str:
         try:
-            escaped: Dict[str, str] = escape_chars if escape_chars else TransferSanitizer.special_chars
+            escaped: Dict[str, str] = escape_chars if escape_chars else TransferSanitizer.escape_chars
             import re
             pattern: Pattern[str] = re.compile(r'(' + '|'.join(escaped.keys()) + r')')
             return pattern.sub(lambda x: escaped[
@@ -40,7 +44,7 @@ class TransferSanitizer:
     def filter(entity: str = '', remove_chars: List[str] = None) -> str:
         try:
             import re
-            removed: Union[List[str],Collection[str]] = remove_chars if remove_chars else TransferSanitizer.special_chars.keys()
+            removed: List[str] = remove_chars if remove_chars else TransferSanitizer.remove_chars
             pattern: Pattern[str] = re.compile(r'{}'.format('|'.join(removed)))
             return pattern.sub('', entity)
         except Exception as err:
@@ -92,9 +96,9 @@ class TransferSanitizer:
         try:
             html: str = self.markdown_to_html(self.entity)
             # !important Only & is escaped in markdown library
-            escape_chars: Dict[str, str] = {i: TransferSanitizer.special_chars[i] for i in
-                                            TransferSanitizer.special_chars if i != '&'}
-            return self.post_data(self.url, self.sanitize(html, escape_chars=escape_chars))
+            escape_chars: Dict[str, str] = {i: TransferSanitizer.escape_chars[i] for i in
+                                            TransferSanitizer.escape_chars if i != '&'}
+            return self.post_data(self.url, self.sanitize(html, escape_chars=escape_chars, priority='fe'))
         except Exception as err:
             raise Exception('Error on send to APi: {}'.format(err))
 

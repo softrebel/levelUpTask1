@@ -37,10 +37,35 @@ class TransferSanitizerTest(unittest.TestCase):
         })
 
     def test_filter(self):
-        pass
+        self.assertEqual(TransferSanitizer.filter('<script>alert("hi");</script>'), 'alert("hi");</script>')
+
+    def test_filter_with_other_remove_chars(self):
+        self.assertEqual(TransferSanitizer.filter('<script>alert("hi");</script>', ['alert']),
+                         '<script>("hi");</script>')
 
     def test_validate(self):
         pass
+
+    def test_sanitize(self):
+        self.assertEqual(TransferSanitizer.sanitize('<script>alert(" \'jAck\' & \'Jill\' ");</script>', priority='fe'),
+                         'alert(&quot;, &#39;jAck&#39; &amp; &#39;Jill&#39; &quot;,);&lt;&#47;script&gt;')
+
+    def test_sanitize_with_remove_chars(self):
+        self.assertEqual(TransferSanitizer.sanitize('<script>alert(" \'jAck\' & \'Jill\' ");</script>', priority='fe',
+                                                    remove_chars=['alert']),
+                         '&lt;script&gt;(&quot;, &#39;jAck&#39; &amp; &#39;Jill&#39; &quot;,);&lt;&#47;script&gt;')
+
+    def test_sanitize_with_escape_chars(self):
+        self.assertEqual(TransferSanitizer.sanitize('<script>alert(" \'jAck\' & \'Jill\' ");</script>', priority='ef',
+                                                    escape_chars={'script': 'p', '\'': '&#39;'}),
+                         '<p>alert(" &#39;jAck&#39; & &#39;Jill&#39; ");</p>')
+
+    def test_sanitize_with_escape_remove_chars(self):
+        self.assertEqual(TransferSanitizer.sanitize('<script>alert(" \'jAck\' & \'Jill\' ");</script>', priority='ef',
+                                                    escape_chars={'script': 'p', '\'': '&#39;'},
+                                                    remove_chars=['p', '\'']),
+                         '<>alert(" &#39;jAck&#39; & &#39;Jill&#39; ");</>')
+
 
 if __name__ == "__main__":
     unittest.main()
