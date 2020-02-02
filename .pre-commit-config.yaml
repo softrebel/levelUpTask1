@@ -6,8 +6,15 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
-  - repo: https://github.com/PyCQA/pylint
-    rev: pylint-2.4.4
+#  - repo: https://github.com/PyCQA/pylint
+#    rev: pylint-2.4.4
+#    hooks:
+#      - id: pylint
+#        args: ["--errors-only","--rcfile=.pylintrc"]
+  - repo: local
     hooks:
       - id: pylint
-        args: ["--errors-only","--rcfile=.pylintrc"]
+        name: pylint
+        language: system
+        types: [python]
+        entry: "python -m pylint --rcfile=.pylintrc --errors-only"
