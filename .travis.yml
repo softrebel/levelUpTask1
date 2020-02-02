@@ -1,4 +1,8 @@
 language: python
+python:
+  - "3.8"
 os: Linux
-
-
+install:
+  - pip install -r requirements.txt
+script:
+  - python ./src/cli.py "<b>@salam</b>"
