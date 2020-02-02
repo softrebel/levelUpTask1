@@ -63,7 +63,7 @@ class TransferSanitizer:
                  validation_rules: Dict[str, str] = None,
                  priority: str = "fev") -> str:
         try:
-            priority_operations: str = priority if len(priority) <= 3 else 'fev'
+            priority_operations: str = priority
             sanitized: str = entity
             for action in list(priority_operations)[:2]:
                 if action == 'e':
