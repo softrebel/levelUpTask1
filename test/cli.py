@@ -37,7 +37,7 @@ class TransferSanitizerTest(unittest.TestCase):
         })
 
     def test_filter(self):
-        self.assertEqual(TransferSanitizer.filter('<script>alert("hi");</script>'), 'alert("hi");</script>')
+        self.assertEqual(TransferSanitizer.filter('<script>alert("hi");</script>'), 'alert("hi");')
 
     def test_filter_with_other_remove_chars(self):
         self.assertEqual(TransferSanitizer.filter('<script>alert("hi");</script>', ['alert']),
@@ -48,7 +48,7 @@ class TransferSanitizerTest(unittest.TestCase):
 
     def test_sanitize(self):
         self.assertEqual(TransferSanitizer.sanitize('<script>alert(" \'jAck\' & \'Jill\' ");</script>', priority='fe'),
-                         'alert(&quot;, &#39;jAck&#39; &amp; &#39;Jill&#39; &quot;,);&lt;&#47;script&gt;')
+                         'alert(&quot;, &#39;jAck&#39; &amp; &#39;Jill&#39; &quot;,);')
 
     def test_sanitize_with_remove_chars(self):
         self.assertEqual(TransferSanitizer.sanitize('<script>alert(" \'jAck\' & \'Jill\' ");</script>', priority='fe',
