@@ -43,7 +43,7 @@ So i changed the pre-commit-config.yaml as below:
         entry: "python -m pylint --rcfile=.pylintrc --errors-only"
 ```
 
-#Referrences
+# Referrences
 1. https://owasp.org/www-project-cheat-sheets/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
 2. https://www.php.net/manual/en/function.htmlspecialchars.php
 3. https://fishbowl.pastiche.org/2003/07/01/the_curse_of_apos
